@@ -51,6 +51,8 @@ try:
         client = OdooClient(
             dsn=dsn,
             processors=processors,
+            transport=config.get('sentry_transport', 'threaded'),
+            environment=config.get('sentry_environment', ''),
         )
         handler = OdooSentryHandler(client, level=level)
         root_logger.addHandler(handler)
