@@ -4,6 +4,7 @@
 #    OpenERP, Open Source Management Solution
 #    This module copyright (C) 2010 - 2014 Savoir-faire Linux
 #    (<http://www.savoirfairelinux.com>).
+#    © 2018 XCG Consulting
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -24,6 +25,8 @@ import os
 import logging
 import cgitb
 
+import raven
+
 from openerp.tools import config
 from openerp.addons.web.controllers.main import Session
 
@@ -39,6 +42,16 @@ try:
         'raven.processors.SanitizePasswordsProcessor',
         'raven_sanitize_openerp.OpenerpPasswordsProcessor'
     )
+
+    DEFAULT_TRANSPORT = 'threaded'
+    def select_transport(name):
+        return {
+            'requests_synchronous': raven.transport.RequestsHTTPTransport,
+            'requests_threaded': raven.transport.ThreadedRequestsHTTPTransport,
+            'synchronous': raven.transport.HTTPTransport,
+            'threaded': raven.transport.ThreadedHTTPTransport,
+        }.get(name, DEFAULT_TRANSPORT)
+
     if config.get(u'sentry_dsn'):
         cgitb.enable()
         # Get DSN info from config file or ~/.openerp_serverrc (recommended)
@@ -51,7 +64,7 @@ try:
         client = OdooClient(
             dsn=dsn,
             processors=processors,
-            transport=config.get('sentry_transport', 'threaded'),
+            transport=select_transport(config.get('sentry_transport', None)),
             environment=config.get('sentry_environment', ''),
         )
         handler = OdooSentryHandler(client, level=level)
