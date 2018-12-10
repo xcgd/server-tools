@@ -4,9 +4,9 @@
 
 import unittest
 
-import mock
-
 from ..logutils import SanitizeOdooCookiesProcessor
+
+import mock
 
 
 class TestOdooCookieSanitizer(unittest.TestCase):
