@@ -28,7 +28,7 @@ except ImportError:
 def get_odoo_commit(odoo_dir):
     '''Attempts to get Odoo git commit from :param:`odoo_dir`.'''
     if not odoo_dir:
-        return
+        return raven.fetch_package_version('odoo')
     try:
         return raven.fetch_git_sha(odoo_dir)
     except raven.exceptions.InvalidGitRepository:
