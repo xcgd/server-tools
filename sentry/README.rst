@@ -74,6 +74,9 @@ configuration file:
 ``sentry_odoo_dir``            Absolute path to your Odoo installation directory. This is optional
                                and will only be used to extract the Odoo Git commit, which will be
                                sent to Sentry, to allow to distinguish between Odoo updates.
+
+``sentry_options_file``        Path to a file containing lines with sentry options and their
+                               values. They are set before the other options.
 =============================  ====================================================================  ==========================================================
 
 Other `client arguments

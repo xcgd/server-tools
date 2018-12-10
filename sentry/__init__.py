@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016-2017 Versada <https://versada.eu/>
+# Copyright 2018 XCG Consulting <https://www.xcg-consulting.fr/>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import logging
+import StringIO
+
+from six.moves import configparser
 
 from odoo.service import wsgi_server
 from odoo.tools import config as odoo_config
+from odoo.tools.safe_eval import safe_eval
 
 from . import const
 from .logutils import LoggerNameFilter, OdooSentryHandler
@@ -41,9 +46,22 @@ def initialize_raven(config, client_cls=None):
     enabled = config.get('sentry_enabled', False)
     if not (HAS_RAVEN and enabled):
         return
-    options = {
-        'release': get_odoo_commit(config.get('sentry_odoo_dir')),
-    }
+    options = dict()
+    odoo_release = get_odoo_commit(config.get('sentry_odoo_dir'))
+    sentry_options_file = config.get('sentry_options_file')
+    if sentry_options_file:
+        ini_str = '[_]\n' + open(sentry_options_file, 'r').read()
+        ini_fp = StringIO.StringIO(ini_str)
+        config2 = configparser.RawConfigParser()
+        config2.readfp(ini_fp)
+        for key in config2.options('_'):
+            options[key] = config2.get('_', key)
+        options['tags'] = safe_eval(options['tags']) or dict()
+    else:
+        options['release'] = odoo_release
+        options['tags'] = dict()
+    options['tags']['odoo'] = odoo_release
+
     for option in const.get_sentry_options():
         value = config.get('sentry_%s' % option.key, option.default)
         if callable(option.converter):
