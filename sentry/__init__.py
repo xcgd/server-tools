@@ -56,7 +56,10 @@ def initialize_raven(config, client_cls=None):
         config2.readfp(ini_fp)
         for key in config2.options('_'):
             options[key] = config2.get('_', key)
-        options['tags'] = safe_eval(options['tags']) or dict()
+        if 'tags' in options:
+            options['tags'] = safe_eval(options['tags'])
+        else:
+            options['tags'] = dict()
     else:
         options['release'] = odoo_release
         options['tags'] = dict()
