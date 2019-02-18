@@ -32,7 +32,7 @@ addon | version | summary
 [auto_backup](auto_backup/) | 10.0.1.0.2 | Backups database
 [base_cron_exclusion](base_cron_exclusion/) | 10.0.1.0.0 | Allow you to select scheduled actions that should not run simultaneously.
 [base_custom_info](base_custom_info/) | 10.0.1.0.0 | Add custom field in models
-[base_exception](base_exception/) | 10.0.1.0.0 | This module provide an abstract model to manage customizable exceptions to be applied on different models (sale order, invoice, ...)
+[base_exception](base_exception/) | 10.0.2.0.1 | This module provide an abstract model to manage customizable exceptions to be applied on different models (sale order, invoice, ...)
 [base_export_manager](base_export_manager/) | 10.0.1.0.0 | Manage model export profiles
 [base_export_security](base_export_security/) | 10.0.1.0.0 | Security features for Odoo exports
 [base_external_dbsource](base_external_dbsource/) | 10.0.2.0.0 | External Database Sources
@@ -47,6 +47,7 @@ addon | version | summary
 [base_import_default_enable_tracking](base_import_default_enable_tracking/) | 10.0.1.0.0 | This modules simply enables history tracking when doing an import.
 [base_import_match](base_import_match/) | 10.0.1.0.0 | Try to avoid duplicates before importing
 [base_import_security_group](base_import_security_group/) | 10.0.1.0.0 | Group-based permissions for importing CSV files
+[base_jsonify](base_jsonify/) | 10.0.1.0.0 | Base module that provide the jsonify method on all models
 [base_kanban_stage](base_kanban_stage/) | 10.0.1.2.1 | Provides stage model and abstract logic for inheritance
 [base_kanban_stage_state](base_kanban_stage_state/) | 10.0.1.0.0 | Maps stages from base_kanban_stage to states
 [base_locale_uom_default](base_locale_uom_default/) | 10.0.1.0.0 | This provides settings to select default UoMs at the language level.
@@ -86,6 +87,7 @@ addon | version | summary
 [scheduler_error_mailer](scheduler_error_mailer/) | 10.0.1.0.0 | Scheduler Error Mailer
 [sentry](sentry/) | 10.0.1.0.1 | Report Odoo errors to Sentry
 [sequence_check_digit](sequence_check_digit/) | 10.0.1.0.0 | Adds a check digit on sequences
+[sequence_date_range](sequence_date_range/) | 10.0.1.0.0 | Module used to use the year of the date_to into sequences (instead of date_from)
 [server_environment](server_environment/) | 10.0.1.3.0 | move some configurations out of the database
 [server_environment_files_sample](server_environment_files_sample/) | 10.0.1.0.0 | sample config file for server_environment
 [server_environment_ir_config_parameter](server_environment_ir_config_parameter/) | 10.0.1.0.1 | Override System Parameters from server environment file
