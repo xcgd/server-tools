@@ -68,8 +68,17 @@ class ResUsers(models.Model):
                 group_ids.append(role.group_id.id)
                 group_ids.extend(role.implied_ids.ids)
             group_ids = list(set(group_ids))    # Remove duplicates IDs
-            vals = {
-                'groups_id': [(6, 0, group_ids)],
-            }
-            super(ResUsers, user).write(vals)
+            group_commands = list()
+            for group in user.groups_id:
+                if group.id not in group_ids:
+                    group_commands.append((3, group.id, 0))
+            user_group_ids = user.groups_id.mapped('id')
+            for group_id in group_ids:
+                if group_id not in user_group_ids:
+                    group_commands.append((4, group_id, 0))
+            if group_commands:
+                vals = {
+                    'groups_id': group_commands
+                }
+                super(ResUsers, user).write(vals)
         return True
