@@ -1,4 +1,5 @@
 # Copyright 2016-2017 Versada <https://versada.eu/>
+# Copyright 2020 XCG Consulting <https://xcg-consulting.fr/>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import logging
@@ -19,6 +20,8 @@ try:
 except ImportError:
     HAS_RAVEN = False
     _logger.debug('Cannot import "raven". Please make sure it is installed.')
+
+RELEASE_OPTION = "release"
 
 
 def get_odoo_commit(odoo_dir):
@@ -46,12 +49,18 @@ def initialize_raven(config, client_cls=None):
         _logger.debug(
             "Both sentry_odoo_dir and sentry_release defined, choosing sentry_release"
         )
-    options = {
-        "release": config.get(
+    options = dict()
+    # only set release when there is a value, sentry will use the
+    # SENTRY_RELEASE environment variable if nothing is set.
+    release = config.get(
             "sentry_release", get_odoo_commit(config.get("sentry_odoo_dir"))
         )
-    }
+    if release:
+        options[RELEASE_OPTION] = release
     for option in const.get_sentry_options():
+        if option.key == RELEASE_OPTION:
+            # do not reprocess release
+            continue
         value = config.get("sentry_%s" % option.key, option.default)
         if isinstance(option.converter, collections.Callable):
             value = option.converter(value)
