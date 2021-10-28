@@ -134,6 +134,9 @@ class AuditlogRule(models.Model):
         string="Action",
         states={"subscribed": [("readonly", True)]},
     )
+    capture_record = fields.Boolean(
+        "Capture Record", help="Select this if you want to keep track of Unlink Record",
+    )
 
     _sql_constraints = [
         (
@@ -261,7 +264,7 @@ class AuditlogRule(models.Model):
             # their values exist in cache.
             new_values = {}
             fields_list = rule_model.get_auditlog_fields(self)
-            for new_record in new_records:
+            for new_record in new_records.sudo():
                 new_values.setdefault(new_record.id, {})
                 for fname, field in new_record._fields.items():
                     if fname not in fields_list:
@@ -461,6 +464,10 @@ class AuditlogRule(models.Model):
         for res_id in res_ids:
             model_model = self.env[res_model]
             name = model_model.browse(res_id).name_get()
+            model_id = self.pool._auditlog_model_cache[res_model]
+            auditlog_rule = self.env["auditlog.rule"].search(
+                [("model_id", "=", model_id)]
+            )
             res_name = name and name[0] and name[0][1]
             vals = {
                 "name": res_name,
@@ -485,6 +492,10 @@ class AuditlogRule(models.Model):
             elif method == "write":
                 self._create_log_line_on_write(
                     log, diff.changed(), old_values, new_values
+                )
+            elif method == "unlink" and auditlog_rule.capture_record:
+                self._create_log_line_on_read(
+                    log, list(old_values.get(res_id, EMPTY_DICT).keys()), old_values
                 )
 
     def _get_field(self, model, field_name):
