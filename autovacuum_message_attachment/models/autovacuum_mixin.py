@@ -52,7 +52,9 @@ class AutovacuumMixin(models.AbstractModel):
     def _get_autovacuum_records(self, rule):
         if rule.model_id and rule.model_filter_domain:
             return self._get_autovacuum_records_model(rule)
-        return self.search(self._get_autovacuum_domain(rule))
+        return self.search(
+            self._get_autovacuum_domain(rule), limit=rule.limit_per_job
+        )
 
     def _get_autovacuum_records_model(self, rule):
         domain = self._get_autovacuum_domain(rule)
@@ -69,4 +71,6 @@ class AutovacuumMixin(models.AbstractModel):
                 ("%s.%s" % (autovacuum_relation, field), operator, value)
             )
         records = self.env[rule.model_id.model].search(record_domain)
-        return self.search(domain + [("res_id", "in", records.ids)])
+        return self.search(
+            domain + [("res_id", "in", records.ids)], limit=rule.limit_per_job
+        )

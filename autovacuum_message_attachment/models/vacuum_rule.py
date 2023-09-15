@@ -83,6 +83,24 @@ class VacuumRule(models.Model):
     active = fields.Boolean(default=True)
     description = fields.Text()
 
+    limit_per_job = fields.Integer(
+        default=None,
+        help="Limit the number of objects deleted per operation. "
+        "Use 0 to remove limit.",
+    )
+
+    @api.multi
+    @api.constrains("limit_per_job")
+    def limit_validation(self):
+        for rule in self:
+            if rule.limit_per_job and (
+                not isinstance(rule.limit_per_job, int)
+                or rule.limit_per_job < 0
+            ):
+                raise exceptions.ValidationError(
+                    _("The limit should be 0 or a positive number.")
+                )
+
     @api.multi
     @api.constrains("retention_time")
     def retention_time_not_null(self):
