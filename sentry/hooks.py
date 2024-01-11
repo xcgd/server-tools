@@ -94,7 +94,7 @@ def initialize_sentry(config):
     if config.get("sentry_transport"):
         warnings.warn(
             "`sentry_transport` has been deprecated.  "
-            "Its not neccesary send it, will use `HttpTranport` by default.",
+            "Its not necessary send it, will use `HttpTranport` by default.",
             DeprecationWarning,
         )
     options = {}
@@ -103,6 +103,30 @@ def initialize_sentry(config):
         if isinstance(option.converter, abc.Callable):
             value = option.converter(value)
         options[option.key] = value
+    # request_bodies renamed max_request_body_size in sentry-sdk 1.29
+    max_request_body_size = None
+    if "request_bodies" in sentry_sdk.consts.DEFAULT_OPTIONS:
+        max_request_body_size = config.get(
+            "sentry_max_request_body_size", max_request_body_size
+        )
+        if max_request_body_size:
+            warnings.warn("max_request_body_size is not available on your sentry_sdk")
+        max_request_body_size = config.get(
+            "sentry_request_bodies", max_request_body_size
+        )
+        if max_request_body_size is not None:
+            options["request_bodies"] = max_request_body_size
+    else:
+        max_request_body_size = config.get(
+            "sentry_request_bodies", max_request_body_size
+        )
+        if max_request_body_size:
+            warnings.warn("request_bodies is deprecated on your sentry_sdk")
+        max_request_body_size = config.get(
+            "sentry_max_request_body_size", max_request_body_size
+        )
+        if max_request_body_size is not None:
+            options["max_request_body_size"] = max_request_body_size
 
     exclude_loggers = const.split_multiple(
         config.get("sentry_exclude_loggers", const.DEFAULT_EXCLUDE_LOGGERS)
