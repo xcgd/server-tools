@@ -17,7 +17,8 @@ values.
 
 **Typical Settings**
 
-.. code-block:: shell
+.. code-block:: cfg
+   :emphasize-lines: 1
 
     server_wide_modules = web,module_change_auto_install
 
@@ -32,6 +33,13 @@ values.
         disable_odoo_online,
         account_usability
 
+When using environment variables, the same configuration is:
+
+.. code-block:: shell
+
+   export ODOO_MODULES_AUTO_INSTALL_DISABLED=partner_autocomplete,iap,mail_bot
+   export ODOO_MODULES_AUTO_INSTALL_ENABLED=web_responsive:web,base_technical_features,disable_odoo_online,account_usability
+
 Run your instance and check logs. Modules that has been altered should be present in your log, at the load of your instance:
 
 .. code-block:: shell
@@ -45,7 +53,7 @@ Run your instance and check logs. Modules that has been altered should be presen
 
 if your ``odoo.cfg`` file contains the following configuration:
 
-.. code-block:: shell
+.. code-block:: cfg
 
     modules_auto_install_enabled =
         account_usability,
@@ -62,3 +70,10 @@ The behaviour will be the following:
 * ``base_technical_features`` will be ALWAYS installed
 
 * ``point_of_sale`` module will be installed as soon as ``sale`` and ``purchase`` module are installed.
+
+When using environment variables, the same configuration is:
+
+.. code-block:: shell
+
+   export ODOO_MODULES_AUTO_INSTALL_ENABLED=account_usability,web_responsive:web,base_technical_features:,point_of_sale:sale/purchase
+
